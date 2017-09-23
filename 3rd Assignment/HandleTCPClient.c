@@ -20,16 +20,23 @@ void HandleTCPClient(int clntSocket) {
 
     /* Receive message from client */
 	if ((recvMsgSize = recv(clntSocket, echoBuffer, RCVBUFSIZE, 0)) < 0)
-		DieWithError("recv() failed");
+        DieWithError("recv() failed");
+    
+    if (recvmsg > 0) {
+        echoBuffer[recvMsgSize] = '\0';
+        printf("WELCOME: %s\n", echoBuffer);
+        strcpy(echoBuffer, "Hi");
+        if (send(clntSocket, echoBuffer, recvMsgSize, 0) != recvMsgSize)
+            DieWithError("send() failed");
+        if ((recvMsgSize = recv(clntSocket, echoBuffer, RCVBUFSIZE, 0)) < 0)
+            DieWithError("recv() failed");
+    }
    
 	/* Send received string and receive again until end of transmission */
 	while (recvMsgSize > 0) { /* zero indicates end of transmission */
         echoBuffer[recvMsgSize] = '\0';
         printf("msg<- ");
         printf("%s\n", echoBuffer);
-
-        if(strcmp(echoBuffer, "hello") == 0 && counter == 0)
-            strcpy(echoBuffer, "hi");
 
         /* Echo message back to client */
         if (send(clntSocket, echoBuffer, recvMsgSize, 0) != recvMsgSize)
@@ -43,8 +50,6 @@ void HandleTCPClient(int clntSocket) {
         /* See if there is more data to receive */
 		if ((recvMsgSize = recv(clntSocket, echoBuffer, RCVBUFSIZE, 0)) < 0)
 			DieWithError("recv() failed");
-
-        counter = 1;
 	}
     fclose(stream);
 	close(clntSocket);
