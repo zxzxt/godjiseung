@@ -7,12 +7,9 @@
 void DieWithError(char *errorMessage);
 /* Error handling function */
 
-void HandleTCPClient(int clntSocket) {
+void HandleFTPServer(int clntSocket);
 
-    FILE *stream = NULL;
-    stream = fopen("echo_history.log", "a");
-    if(stream == NULL)
-        DieWithError("File open error !");
+void HandleTCPClient(int clntSocket) {
 
 	char echoBuffer[RCVBUFSIZE]; /* Buffer for echo string */
     int recvMsgSize; /* Size of received message */
@@ -39,25 +36,27 @@ void HandleTCPClient(int clntSocket) {
 
 	/* Send received string and receive again until end of transmission */
 	while (recvMsgSize > 0) { /* zero indicates end of transmission */
-        echoBuffer[recvMsgSize] = '\0';
-        printf("msg<- ");
-        printf("%s\n", echoBuffer);
+        
+        if(!strcmp(echoBuffer, "FT")) {
+            HandleFTPServer(clntSocket);
+        }
+        else {
+            echoBuffer[recvMsgSize] = '\0';
+            printf("msg<- ");
+            printf("%s\n", echoBuffer);
 
-        /* Echo message back to client */
-        if (send(clntSocket, echoBuffer, recvMsgSize, 0) != recvMsgSize)
-			DieWithError("send() failed");
+            /* Echo message back to client */
+            if (send(clntSocket, echoBuffer, recvMsgSize, 0) != recvMsgSize)
+			    DieWithError("send() failed");
        
-        printf("msg-> ");
-        printf("%s\n", echoBuffer);
-    
-        fprintf(stream,"%s\n", echoBuffer);
-		
+            printf("msg-> ");
+            printf("%s\n", echoBuffer);
+        }
+
         /* See if there is more data to receive */
 		if ((recvMsgSize = recv(clntSocket, echoBuffer, RCVBUFSIZE, 0)) < 0)
 			DieWithError("recv() failed");
 	}
-
-    fclose(stream);
 	close(clntSocket);
 	/* Close client socket */
 }

@@ -7,6 +7,7 @@
 #include <unistd.h> /* for close() */
 #include "DieWithError.c"
 #include "HandleTCPClient.c"
+#include "HandleFTPServer.c"
 
 #define RCVBUFSIZE 32 /* Size of receive buffer */
 #define MAXPENDING 5
