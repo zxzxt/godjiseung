@@ -24,7 +24,7 @@ void HandleFTPClient(int sock, char *servIP) {
     printf("Welcome to Socket FT client!\n");   
    
     while(strcmp(command, "e")) {     
-        printf("ftp command [ p)ut   g)et   l)s   r)ls   e)xit ] -> ");
+        printf("ftp command [ p)ut   g)et   l)s   r)s   e)xit ] -> ");
         scanf("%s", command);
     
         /* Send command to the server */
@@ -123,33 +123,6 @@ void HandleFTPClient(int sock, char *servIP) {
         else if(!strcmp(command, "l")) {
             system("ls");
         }
-        else if(!strcmp(command, "r")) {
-            
-            if((recvMsgSize = recv(sock, (char *)&files.totalBytes, sizeof(int), 0)) < 0)
-                DieWithError("recv() failed");
-
-            if(recvMsgSize > 0) {
-                per = count = (files.totalBytes / BUFSIZE);
-
-                while(count) {
-                    if((recvMsgSize = recv(sock, buf, BUFSIZE, 0)) < 0)
-                        DieWithError("recv() failed");
-
-                    printf("%s ", buf);
-                    printf("\n");
-                    count--;
-                }
-
-                /* receive rest of the file */
-                count = files.totalBytes - (per * BUFSIZE);
-                if((recvMsgSize = recv(sock, buf, BUFSIZE, 0)) < 0)
-                    DieWithError("recv() failed");
-
-                printf("%s ", buf);
-                printf("\n");
-            }
-            
-        }//if 'r'
         else if(!strcmp(command, "e")) {
             break;
         }

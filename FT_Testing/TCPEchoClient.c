@@ -62,9 +62,10 @@ int main(int argc, char *argv[]) {
 
 		    totalBytesRcvd += bytesRcvd; /* Keep tally of total bytes */
 		    echoBuffer[bytesRcvd] = '\0'; /* Terminate the string! */
-		    printf("%s\n", echoBuffer); /* Print the echo buffer */
+		    printf("%s", echoBuffer); /* Print the echo buffer */
 	    }
-
+	
+	    printf("\n");
         printf("msg-> ");
         scanf("%s", echoString);
         
@@ -75,12 +76,11 @@ int main(int argc, char *argv[]) {
             
             HandleFTPClient(sock, inet_ntoa(echoServAddr.sin_addr));
             strcpy(echoString, "/quit");
-            send(sock, echoString, strlen(echoString), 0);
             printf("msg-> %s\n", echoString);
         }
 
     }while(strcmp(echoString, "/quit"));
-    
+
 	close(sock);
 	exit(0);
 }

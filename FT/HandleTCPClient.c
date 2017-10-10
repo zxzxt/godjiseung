@@ -36,10 +36,10 @@ void HandleTCPClient(int clntSocket) {
 
 	/* Send received string and receive again until end of transmission */
 	while (recvMsgSize > 0) { /* zero indicates end of transmission */
-        
-        if(!strcmp(echoBuffer, "FT")) {
+        if(!strcmp(echoBuffer, "FT"))
             HandleFTPServer(clntSocket);
-        }
+        else if(!strcmp(echoBuffer, "/quit"))
+            break;
         else {
             echoBuffer[recvMsgSize] = '\0';
             printf("msg<- ");
@@ -55,7 +55,7 @@ void HandleTCPClient(int clntSocket) {
 
         /* See if there is more data to receive */
 		if ((recvMsgSize = recv(clntSocket, echoBuffer, RCVBUFSIZE, 0)) < 0)
-			DieWithError("recv() failed");
+			DieWithError("0.recv() failed"); 
 	}
 	close(clntSocket);
 	/* Close client socket */
